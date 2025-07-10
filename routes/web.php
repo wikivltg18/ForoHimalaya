@@ -10,7 +10,7 @@ use App\Http\Controllers\generalController;
 use App\Http\Controllers\Desarrollo\Herramientas\Areas\areasController;
 use App\Http\Controllers\Desarrollo\Herramientas\Roles\rolesController;
 use App\Http\Controllers\fakeDataController;
-use App\Http\Controllers\Desarrollo\Clientes\clientesController;
+use App\Http\Controllers\Administrador\Clientes\clientesController;
 use App\Http\Controllers\desarrollo\Herramientas\Servicios\serviciosController;
 use App\Http\Middleware\DisableCache;
 use App\Http\Middleware\Guest;

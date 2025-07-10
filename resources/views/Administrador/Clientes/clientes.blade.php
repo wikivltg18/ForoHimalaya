@@ -1,10 +1,14 @@
+
+{{-- Vista de administración de clientes --}}
 @extends('Administrador.layout_admin')
 
 @section('template-blank-admin')
+    {{-- Sección para agregar estilos CSS específicos para la tabla de clientes --}}
     @push('CSS')
         <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/dataTables.bootstrap4.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/responsive.bootstrap4.min.css') }}">
         <style>
+            {{-- Estilos personalizados para el botón principal --}}
             .btn-primary {
                 background-color: #15baee !important;
                 border-color: #15baee !important;
@@ -19,32 +23,34 @@
         </style>
     @endpush
 
+    {{-- Botón para crear un nuevo cliente --}}
     @section('button-press')
         <a href="{{ url('superadmin/crearCliente') }}" class="btn btn-primary"> Crear cliente </a>
     @endsection
 
 
+    {{-- Tabla de clientes --}}
     <div class="table-responsive">
         <table id="data-table-clientes" class="table stripe hover nowrap table-responsive">
             <thead class="text-center">
+                {{-- Encabezados de la tabla --}}
                 <tr>
                     <th class="table-plus datatable-nosort">Logo</th>
                     <th>Nombre</th>
                     <th>Web</th>
                     <th>Email</th>
-                    <th>Mapa</th>
-                    <th>Contrato</th>
                     <th>Ejecutivo asignado</th>
                     <th>Estado</th>
                     <th class="datatable-nosort">Acciones</th>
                 </tr>
             </thead>
             <tbody class="text-center">
-                <!-- DataTables llenará esto -->
+                <!-- DataTables llenará esto dinámicamente -->
             </tbody>
         </table>
 
 
+        {{-- Scripts JS para inicializar DataTables y funcionalidades de la tabla --}}
         @push('JS')
             <script src="{{ asset('vendors/scripts/core.js') }}"></script>
             <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
@@ -53,18 +59,20 @@
             <script src="{{ asset('src/plugins/datatables/js/dataTables.responsive.min.js') }}"></script>
             <script src="{{ asset('src/plugins/datatables/js/responsive.bootstrap4.min.js') }}"></script>
             <script>
+                // Inicialización de la tabla de clientes usando DataTables
                 $(document).ready(function() {
                     $('#data-table-clientes').DataTable({
+                        // Configuración de la fuente de datos vía AJAX
                         ajax: {
                             url: '{{ route('api.clientes') }}',
                             type: 'GET'
                         },
+                        // Definición de las columnas y renderizado personalizado
                         columns:  [
                             {
                                 data: 'logo',
                                 render: function(data) {
-                                    return data ??
-                                        '<img src="{{ asset('vendors/images/photo4.jpg') }}" class="rounded-circle" alt="logo_cliente" >'
+                                    return data ?? '<img src="{{ asset('vendors/images/photo4.jpg') }}" class="rounded-circle" alt="logo_cliente" >'
                                 }
                             },
                             {
@@ -80,24 +88,6 @@
                                 data: 'email',
                                 render: function(data) {
                                     return data ?? "Correo sin asignar."
-                                }
-
-                            },
-                            {
-                                data: 'mapa_cliente',
-                                render: function(data){
-                                    return data ?? "Mapa sin agregar."
-                                }
-                            },
-
-                            {
-                                data: 'contrato',
-                                render: function(data, type, row) {
-                                    if (data && Array.isArray(data) && data.length > 0) {
-                                        return data.map(contrato => contrato.nombre).join(', ');
-                                    } else {
-                                        return 'Sin contrato.';
-                                    }
                                 }
                             },
                             {
@@ -130,7 +120,6 @@
                                     `;
                                 }
                             },
-
                         ]
                     });
                 });

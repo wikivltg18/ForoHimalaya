@@ -1,101 +1,18 @@
 @extends('Administrador.layout_admin')
 
 @section('template-blank-admin')
-    @push('CSS')
-        <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/switchery/switchery.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css') }}">
-        <link rel="stylesheet" type="text/css"
-            href="{{ asset('src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/jquery-steps/jquery.steps.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}">
-
-        <style>
-            .btn-primary {
-                background-color: #15baee !important;
-                border-color: #15baee !important;
-                color: white !important;
-                font-weight: bolder !important;
-            }
-
-            .btn-primary:hover {
-                background-color: #004EA4 !important;
-                border-color: #004EA4 !important;
-            }
-
-            .btn-outline-success:hover,
-            .btn-outline-success:active {
-                color: #fff !important;
-                background-color: #15baee !important;
-                border-color: #15baee !important;
-            }
-
-            .btn-outline-success {
-                border-color: #15baee !important;
-            }
-
-            .mt-6 {
-                margin-top: 6rem;
-            }
-
-            .mt-7 {
-                margin-top: 7rem;
-            }
-
-            .mt-8 {
-                margin-top: 8rem;
-            }
-
-            .mt-9 {
-                margin-top: 9rem;
-            }
-
-            .mt-10 {
-                margin-top: 10rem;
-            }
-
-            .mt-11 {
-                margin-top: 11rem;
-            }
-
-            .mt-12 {
-                margin-top: 12rem;
-            }
-
-            .mt-13 {
-                margin-top: 13rem;
-            }
-
-            .mt-14 {
-                margin-top: 14rem;
-            }
-
-            .mt-15 {
-                margin-top: 15rem;
-            }
-
-
-            .form-control-warning {
-                /* Estilo consistente para errores */
-                border-color: #dc3545;
-            }
-
-            .error-message {
-                /* Estilo para los mensajes de error */
-                color: #dc3545;
-                font-size: 0.8rem;
-                margin-top: 0.25rem;
-            }
-
-            /* Estilo adicional para el wizard como en la imagen */
-            .steps ul {
+    <style>
+            .steps {
                 display: flex;
                 justify-content: center;
+                align-items: center;
+                margin: 20px 0;
             }
-
-            .steps li {
-                flex: 1;
+            .steps .step {
+                background-color: #e9ecef;
+                color: #495057;
+                padding: 10px 20px;
+                border-radius: 5px;         
                 max-width: 200px;
             }
 
@@ -109,7 +26,7 @@
                 color: white;
             }
         </style>
-    @endpush
+
 
     @section('button-press')
         <a href="{{ route('Clientes')}}" class="btn btn-primary">Listado de clientes</a>
@@ -190,17 +107,6 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="mapa_cliente">Mapa cliente</label>
-                            <input type="file" name="mapa_cliente" id="mapa_cliente"
-                                class="form-control @error('mapa_cliente') form-control-warning @enderror">
-                            <small class="text-muted"> Agregar el mapa de cliente en formato excel. </small>
-                            @error('mapa_cliente')
-                                <div class="error-message">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
                             <label for="usuario_id">Director ejecutivo <span class="text-danger"> * </span></label>
                             <select name="usuario_id" id="usuario_id"
                                 class="form-control @error('usuario_id') form-control-warning @enderror">
@@ -217,54 +123,11 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="contratos">Contrato <span class="text-danger"> * </span></label>
-                            <select class="selectpicker form-control @error('contratos') form-control-warning @enderror"
-                                data-size="5" data-style="btn-outline-success" data-selected-text-format="count"
-                                multiple name="contratos[]" id="contratos">
-                                @foreach ($contratos as $contrato)
-                                    <option value="{{ $contrato->id }}"> {{ $contrato->nombre }}</option>
-                                @endforeach
+                            <label for="estado">Estado</label>
+                            <select name="estado" id="estado" class="form-control" required>
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
                             </select>
-                            <small class="text-muted"> Escoger el tipo de contratos asociados al cliente. </small>
-                            @error('contratos')
-                                <div class="error-message">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="servicio_id">Servicios <span class="text-danger"> * </span></label>
-                            <select name="servicio_id" id="servicio_id"
-                                class="form-control @error('servicio_id') form-control-warning @enderror">
-                                <option value="">Seleccione un servicio</option>
-                                @foreach ($servicios as $servicio)
-                                    <option value="{{ $servicio->id }}"> {{ $servicio->nombre }} </option>
-                                @endforeach
-                            </select>
-                            <small class="text-muted"> Seleccione el servicio que se encargara del cliente. </small>
-                            @error('servicio_id')
-                                <div class="error-message">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="servicios_relacionados">Tipo servicio asociado <spanclass="text-danger">*</span></label>
-                                    <select id="servicios_relacionados" name="servicios_relacionados[]" multiple>
-
-                                    </select>
-                            <small class="text-muted">Cree los servicios relacionados con el cliente.</small>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="servicios_relacionados">Fee<span class="text-danger">*</span> </label>
-                                    <select  name="recurrencia" class="form-control @error('fe_cliente') form-control-warning @enderror" name="fe_cliente">
-                                        <option value="">seleccione la recurrencia</option>
-                                        <option value=1>Si</option>
-                                        <option value=0>No</option>
-                                    </select>
-                            <small class="text-muted">Cree los servicios relacionados con el cliente.</small>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -328,52 +191,5 @@
 
 
 
-
-        @push('JS')
-            <script src="{{ asset('vendors/scripts/core.js') }}"></script>
-            <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
-            <script src="{{ asset('vendors/scripts/process.js') }}"></script>
-            <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
-            <script src="{{ asset('src/plugins/switchery/switchery.min.js') }}"></script>
-            <script src="{{ asset('src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
-            <script src="{{ asset('src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.js') }}"></script>
-            <script src="{{ asset('vendors/scripts/advanced-components.js') }}"></script>
-            <script src="{{ asset('src/plugins/jquery-steps/jquery.steps.js') }}"></script>
-            <script>
-                $(document).ready(function() {
-                    // Inicializa bootstrap-tagsinput con las opciones itemValue y itemText
-                    $('#servicios_relacionados').tagsinput({
-                        itemValue: 'value', // La propiedad del objeto que contiene el valor
-                        itemText: 'text' // La propiedad del objeto que contiene el texto visible
-                    });
-
-                    // Cuando cambie el selector de servicios
-                    $('#servicio_id').on('change', function() {
-                        var servicioId = $(this).val();
-
-                        if (servicioId) {
-                            $.ajax({
-                                url: "{{ route('obtener.servicios.relacionados', ['id' => ':id']) }}"
-                                    .replace(':id', servicioId),
-                                type: 'GET',
-                                dataType: 'json',
-                                success: function(data) {
-                                    // Limpiar el tagsinput
-                                    $('#servicios_relacionados').tagsinput('removeAll');
-
-                                    // Agregar los nuevos servicios relacionados
-                                    $.each(data, function(key, value) {
-                                        $('#servicios_relacionados').tagsinput('add',
-                                        value); // Ahora 'value' ya es un objeto con 'value' y 'text'
-                                    });
-                                }
-                            });
-                        } else {
-                            // Si no hay servicio seleccionado, limpiar el campo
-                            $('#servicios_relacionados').tagsinput('removeAll');
-                        }
-                    });
-                });
-            </script>
-        @endpush
+    {{-- No JS extra necesario, se eliminó la lógica de servicios relacionados y fee --}}
     @endsection

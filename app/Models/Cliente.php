@@ -22,7 +22,6 @@ class Cliente extends Model
         'logo_cliente',
         'sitio_web',
         'email',
-        'mapa_cliente',
         'telefono',
         'telefono_referencia',
         'usuario_id',
@@ -39,14 +38,6 @@ class Cliente extends Model
         return $this->belongsTo(Usuario::class, 'usuario_id','id' );
     }
 
-    /**
-     * Relación: Un cliente puede tener muchos contratos.
-     * @return HasMany
-     */
-    public function contratos():HasMany
-    {
-        return $this->hasMany(Contrato::class,'cliente_id','id');
-    }
 
     /**
      * Relación: Un cliente puede tener muchas redes sociales.

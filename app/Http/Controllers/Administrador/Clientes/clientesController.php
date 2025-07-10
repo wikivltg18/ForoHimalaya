@@ -28,7 +28,7 @@ class clientesController
      */
     public function apiClientes()
     {
-        $clientes = Cliente::with(['contratos', 'usuario'])->get();
+        $clientes = Cliente::with(['usuario'])->get();
         // Ajustar los datos para DataTables
         $clientes = $clientes->map(function($cliente) {
             return [
@@ -37,8 +37,6 @@ class clientesController
                 'nombre' => $cliente->nombre,
                 'sitio_web' => $cliente->sitio_web,
                 'email' => $cliente->email,
-                'mapa_cliente' => $cliente->mapa_cliente,
-                'contrato' => $cliente->contratos,
                 'usuario' => $cliente->usuario,
                 'estado' => $cliente->estado,
             ];
@@ -51,36 +49,27 @@ class clientesController
      */
     public function create()
     {
-        $servicios = Servicio::with('faseServicio')->get();
         $usuarios = Usuario::with('rol')->where('rol_id', 1)->get();
-        $contratos = Contrato::all();
         $nameRoute = Route::currentRouteName();
-        return view('Administrador.Clientes.crear_cliente',compact('nameRoute','usuarios','contratos','servicios'));
+        return view('Administrador.Clientes.crear_cliente',compact('nameRoute','usuarios'));
     }
 
-    public function obtenerServiciosRelacionados($id)
-    {
-        // Buscar los servicios relacionados según el ID del servicio principal
-        $serviciosRelacionados = Fase_servicio::where('servicio_id', $id)->get();
-
-        // Formatear la respuesta para que coincida con lo que espera bootstrap-tagsinput
-        $formattedServicios = $serviciosRelacionados->map(function ($faseServicio) {
-            return ['value' => $faseServicio->id, 'text' => $faseServicio->nombre]; // Asegúrate de que 'nombre' sea la columna correcta
-        });
-
-        return response()->json($formattedServicios);
-    }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $message = [
-            '' => '',
-            '' => '',
-            '' => '',
-            '' => '',
-            '' => '',
+            'lg_cliente.image' => 'El logo debe ser una imagen válida.',
+            'lg_cliente.mimes' => 'El logo debe ser un archivo de tipo: jpeg, png, jpg, gif o svg.',
+            'nm_cliente.required' => 'El nombre del cliente es obligatorio.',
+            'nm_cliente.string' => 'El nombre del cliente debe ser una cadena de texto.',
+            'nm_cliente.max' => 'El nombre del cliente no debe exceder 25 caracteres.',
+            'st_web.string' => 'El sitio web debe ser una cadena de texto.',
+            'st_web.max' => 'El sitio web no debe exceder 255 caracteres.',
+            'em_cliente.required' => 'El correo electrónico es obligatorio.',
+            'em_cliente.string' => 'El correo electrónico debe ser una cadena de texto.',
+            'em_cliente.max' => 'El correo electrónico no debe exceder 255 caracteres.',
         ];
 
         $request->validate([
@@ -88,9 +77,23 @@ class clientesController
             'nm_cliente' => 'required|string|max:25',
             'st_web' => 'nullable|string|max:255',
             'em_cliente' => 'required|string|max:255',
+            'usuario_id' => 'required|exists:usuarios,id',
+            'estado' => 'required|in:0,1',
         ],$message);
 
+        // Guardar el cliente
+        $cliente = new Cliente();
+        $cliente->nombre = $request->nm_cliente;
+        $cliente->logo_cliente = null; // Lógica para guardar el logo si se implementa
+        $cliente->sitio_web = $request->st_web;
+        $cliente->email = $request->em_cliente;
+        $cliente->telefono = $request->telefono_cliente;
+        $cliente->telefono_referencia = $request->telefono_referencia_cliente;
+        $cliente->usuario_id = $request->usuario_id;
+        $cliente->estado = $request->estado;
+        $cliente->save();
 
+        return redirect()->route('Clientes')->with('success', 'Cliente creado correctamente.');
     }
 
     /**
