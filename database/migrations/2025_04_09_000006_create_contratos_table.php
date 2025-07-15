@@ -18,7 +18,6 @@ return new class extends Migration
 
             $table->string('nombre',50);
             $table->string('descripcion',200);
-
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 

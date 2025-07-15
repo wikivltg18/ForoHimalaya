@@ -29,16 +29,19 @@ class clientesController
     public function apiClientes()
     {
         $clientes = Cliente::with(['usuario'])->get();
+        $clientes = Cliente::with(['usuario', 'contratos'])->get();
         // Ajustar los datos para DataTables
         $clientes = $clientes->map(function($cliente) {
             return [
                 'id' => $cliente->id,
-                'logo' => $cliente->logo ? asset('storage/' . $cliente->logo) : null,
+                'logo' => $cliente->logo_cliente ? asset('storage/' . $cliente->logo_cliente) : null,
                 'nombre' => $cliente->nombre,
                 'sitio_web' => $cliente->sitio_web,
                 'email' => $cliente->email,
                 'usuario' => $cliente->usuario,
                 'estado' => $cliente->estado,
+                'contratos' => $cliente->contratos->map(function($contrato) { return $contrato->nombre;})
+
             ];
         });
         return response()->json(['data' => $clientes]);
@@ -50,8 +53,9 @@ class clientesController
     public function create()
     {
         $usuarios = Usuario::with('rol')->where('rol_id', 1)->get();
+        $contratos = Contrato::all();
         $nameRoute = Route::currentRouteName();
-        return view('Administrador.Clientes.crear_cliente',compact('nameRoute','usuarios'));
+        return view('Administrador.Clientes.crear_cliente',compact('nameRoute','usuarios','contratos'));
     }
 
     /**
@@ -79,7 +83,16 @@ class clientesController
             'em_cliente' => 'required|string|max:255',
             'usuario_id' => 'required|exists:usuarios,id',
             'estado' => 'required|in:0,1',
+            'contrato' => 'required|array',
+            'contrato.*' => 'exists:contratos,id',
         ],$message);
+
+        dd($request);
+
+        // Validación personalizada: al menos uno de los dos checkboxes debe estar marcado
+        if (!is_array($request->contrato) || count($request->contrato) < 1) {
+            return back()->withErrors(['contrato' => 'Debe seleccionar al menos un contrato.'])->withInput();
+        }
 
         // Guardar el cliente
         $cliente = new Cliente();
@@ -92,6 +105,9 @@ class clientesController
         $cliente->usuario_id = $request->usuario_id;
         $cliente->estado = $request->estado;
         $cliente->save();
+
+        // Guardar contratos en la tabla pivote
+        $cliente->contratos()->sync($request->contrato);
 
         return redirect()->route('Clientes')->with('success', 'Cliente creado correctamente.');
     }
@@ -131,3 +147,5 @@ class clientesController
         //
     }
 }
+
+

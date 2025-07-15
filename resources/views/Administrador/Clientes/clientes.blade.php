@@ -44,11 +44,18 @@
                     <th class="datatable-nosort">Acciones</th>
                 </tr>
             </thead>
-            <tbody class="text-center">
+            <tbody class="text-start">
+                {{-- Las filas de la tabla se llenarán dinámicamente con DataTables --}}
+                {{-- Aquí no se define contenido estático, ya que DataTables se encargará de cargar los datos --}}
+                {{-- Puedes agregar filas de ejemplo si es necesario, pero no es recomendable para una tabla dinámica --}}
+                {{-- Ejemplo de fila estática (opcional) --}}
                 <!-- DataTables llenará esto dinámicamente -->
             </tbody>
         </table>
 
+                <td>
+
+                </td>
 
         {{-- Scripts JS para inicializar DataTables y funcionalidades de la tabla --}}
         @push('JS')
@@ -104,7 +111,7 @@
                                 data: 'estado',
                                 render: function(data) {
                                     return data == 1 ?
-                                        '<span class="badge badge-success">Cliente Disponible</span>' :
+                                        '<span class="badge badge-success">Cliente Activo</span>' :
                                         '<span class="badge badge-danger">Cliente Inactivo</span>';
                                 }
                             },
@@ -112,13 +119,20 @@
                                 data: null,
                                 orderable: false,
                                 render: function(data) {
-                                    var baseUrl = "{{ url('superadmin/verCliente') }}";
-                                    var urlServicio = "{{ url('superadmin/editarCliente') }}";
-                                    return `
-                                    <a href="${baseUrl}/${data.id}" class="btn btn-primary">Ver proyecto</a>
-                                    <a href="${baseUrl}/${data.id}" class="text-white btn btn-secondary">Editar cliente</a>
-                                    `;
+                                var baseUrl = "{{ url('superadmin/verCliente') }}";
+                                var botonesContratos = '';
+                                if (Array.isArray(data.contratos) && data.contratos.length > 0) {
+                                    botonesContratos = data.contratos.map(nombre => {
+                                        return `<a href="${baseUrl}/${data.id}" class="btn btn-primary text-white btn-sm m-1">${nombre}</a>`;
+                                    }).join(' ');
+                                } else {
+                                    botonesContratos = '<span class="text-muted">Sin contratos asignados</span>';
                                 }
+                                return `
+                                    <a href="${baseUrl}/${data.id}" class="text-white btn btn-secondary">Editar</a>
+                                    ${botonesContratos}
+                                `;
+                            }
                             },
                         ]
                     });

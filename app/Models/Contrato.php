@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Modelo Contrato
@@ -12,23 +13,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Contrato extends Model
 {
-    // Nombre de la tabla asociada en la base de datos
     protected $table = "contratos";
 
-    // Atributos que se pueden asignar masivamente
     protected $fillable = [
         'id',
         'nombre',
         'descripcion',
-        'cliente_id',
     ];
 
     /**
-     * Relación: Un contrato pertenece a un cliente.
-     * @return BelongsTo
+     * Relación: Un contrato puede pertenecer a muchos clientes.
+     * @return BelongsToMany
      */
-    public function cliente(): BelongsTo
+    public function clientes(): BelongsToMany
     {
-        return $this->belongsTo(Cliente::class,'cliente_id','id');
+        return $this->belongsToMany(Cliente::class, 'contrato_cliente', 'contrato_id', 'cliente_id')->withTimestamps();
     }
 }
